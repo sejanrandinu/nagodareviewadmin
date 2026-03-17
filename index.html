@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="admin.css">
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/4/4b/Emblem_of_Sri_Lanka.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="dashboard">
@@ -16,6 +17,8 @@
                 <h1>පැමිණිලි සහ ප්‍රතිචාර (Dashboard)</h1>
             </div>
             <div class="header-actions">
+                <button id="printBtn" class="action-btn">Print Report</button>
+                <button id="pdfBtn" class="action-btn pdf-btn">Download PDF</button>
                 <button id="clearBtn" class="clear-btn">Clear All Data</button>
             </div>
         </header>

@@ -2,6 +2,30 @@ const API_URL = "https://nagoda-review-api.sejanrandinu01.workers.dev/api/review
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
 
+    document.getElementById('printBtn').addEventListener('click', () => {
+        window.print();
+    });
+
+    document.getElementById('pdfBtn').addEventListener('click', () => {
+        const element = document.querySelector('.dashboard');
+        // Temporarily hide actions for PDF
+        const actions = document.querySelector('.header-actions');
+        if (actions) actions.style.display = 'none';
+
+        const opt = {
+            margin:       0.2,
+            filename:     'reviews_report.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+        
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Restore actions
+            if (actions) actions.style.display = 'flex';
+        });
+    });
+
     document.getElementById('clearBtn').addEventListener('click', () => {
         if (confirm("ඔබට සියලුම දත්ත මැකීමට අවශ්‍ය බව විශ්වාසද? / Are you sure you want to delete all reviews?")) {
             fetch(API_URL, { method: "DELETE" })
