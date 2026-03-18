@@ -2,6 +2,10 @@ const API_URL = "https://nagoda-review-api.sejanrandinu01.workers.dev/api/review
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
 
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        loadData();
+    });
+
     document.getElementById('printBtn').addEventListener('click', () => {
         window.print();
     });
@@ -71,15 +75,15 @@ function loadData() {
                 let displayRating = '';
                 if (review.rating === 'very-happy') {
                     badgeClass = 'badge-very-happy';
-                    displayRating = 'ඉතා සතුටුදායකයි 🤩';
+                    displayRating = 'ඉතා හොඳයි 🤩';
                     veryHappyCount++;
                 } else if (review.rating === 'happy') {
                     badgeClass = 'badge-happy';
-                    displayRating = 'සතුටුදායකයි 😊';
+                    displayRating = 'හොඳයි 😊';
                     happyCount++;
                 } else {
                     badgeClass = 'badge-bad';
-                    displayRating = 'නරකයි 😞';
+                    displayRating = 'අසතුටුදායකයි 😞';
                     badCount++;
                 }
 
