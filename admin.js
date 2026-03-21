@@ -1,13 +1,13 @@
-const API_URL = "https://nagoda-review-api.sejanrandinu01.workers.dev/api/reviews";
+const API_URL = "https://nagoda-feedbacks-api.nagodadb.workers.dev/api/reviews";
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
 
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-        loadData();
-    });
-
     document.getElementById('printBtn').addEventListener('click', () => {
         window.print();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        loadData();
     });
 
     document.getElementById('pdfBtn').addEventListener('click', () => {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('clearBtn').addEventListener('click', () => {
         if (confirm("ඔබට සියලුම දත්ත මැකීමට අවශ්‍ය බව විශ්වාසද? / Are you sure you want to delete all reviews?")) {
-            fetch(API_URL, { method: "DELETE" })
+            fetch(`${API_URL}?clear=true`, { method: "DELETE" })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadData() {
     const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 3rem; color: #64748B;">Loading...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 3rem; color: #64748B;">Loading...</td></tr>';
 
     fetch(API_URL)
         .then(res => res.json())
@@ -63,7 +63,7 @@ function loadData() {
             tableBody.innerHTML = '';
 
             if (!reviews || reviews.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 3rem; color: #64748B;">No responses found yet.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 3rem; color: #64748B;">No responses found yet.</td></tr>';
                 updateStats(0, 0, 0, 0);
                 return;
             }
@@ -91,10 +91,12 @@ function loadData() {
                 <td style="white-space:nowrap; font-size:0.875rem;">${review.date}</td>
                 <td><span class="${badgeClass}">${displayRating}</span></td>
                 <td><strong style="color: #0F172A;">${escapeHtml(review.name)}</strong></td>
+                <td>${escapeHtml(review.phone)}</td>
                 <td>${escapeHtml(review.address)}</td>
                 <td>${escapeHtml(review.purpose)}</td>
                 <td>${escapeHtml(review.message)}</td>
                 <td style="text-transform:uppercase; font-size:0.75rem; color:#64748B; font-weight:700;">${review.lang}</td>
+                <td class="no-print"><button class="row-delete-btn" onclick="deleteRow('${review.id}')">Delete</button></td>
             `;
 
                 tableBody.appendChild(row);
@@ -104,10 +106,29 @@ function loadData() {
         })
         .catch(err => {
             console.error("Error loading data:", err);
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 3rem; color: #EF4444;">Failed to load data. Please check your API connection.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 3rem; color: #EF4444;">Failed to load data. Please check your API connection.</td></tr>';
             updateStats(0, 0, 0, 0);
         });
 }
+
+// Global function to delete a single row
+window.deleteRow = function (id) {
+    if (confirm("ඔබට මෙම ප්‍රතිචාරය මැකීමට අවශ්‍ය බව විශ්වාසද? / Are you sure you want to delete this review?")) {
+        fetch(`${API_URL}?id=${id}`, { method: "DELETE" })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    loadData();
+                } else {
+                    alert("Failed to delete review.");
+                }
+            })
+            .catch(err => {
+                console.error("Error deleting review:", err);
+                alert("Network error.");
+            });
+    }
+};
 
 function updateStats(total, veryHappy, happy, bad) {
     document.getElementById('totalReviews').textContent = total;
